@@ -1,5 +1,8 @@
 package de.frosner
 
+import java.io.FileInputStream
+
+import org.datavec.image.loader.NativeImageLoader
 import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator
 import org.deeplearning4j.scalnet.logging.Logging
 import org.deeplearning4j.util.ModelSerializer
@@ -13,6 +16,8 @@ object PredictMain extends App with Logging {
   val mnistTest: DataSetIterator =
     new MnistDataSetIterator(batchSize, false, seed)
   val model = ModelSerializer.restoreMultiLayerNetwork("model.zip")
-  logger.info(s"Test accuracy = ${model.evaluate(mnistTest).accuracy}")
+  val loader = new NativeImageLoader(MnistLoader.height, MnistLoader.width, 3)
+  val img = MnistLoader.fromStream(new FileInputStream("src/main/resources/mnist_png/testing/1/2.png"))
+  logger.info(s"${model.output(img)}")
 
 }

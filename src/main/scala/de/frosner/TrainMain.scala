@@ -16,16 +16,20 @@
 
 package de.frosner
 
-import org.deeplearning4j.datasets.iterator.impl.MnistDataSetIterator
+import java.io.File
+
+import org.deeplearning4j.nn.api.OptimizationAlgorithm
+import org.deeplearning4j.nn.conf.NeuralNetConfiguration
+import org.deeplearning4j.nn.conf.inputs.InputType
+import org.deeplearning4j.nn.conf.layers.{DenseLayer, OutputLayer}
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
+import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
-import org.deeplearning4j.scalnet.layers.core.Dense
 import org.deeplearning4j.scalnet.logging.Logging
-import org.deeplearning4j.scalnet.models.NeuralNet
-import org.deeplearning4j.scalnet.regularizers.L2
 import org.deeplearning4j.util.ModelSerializer
 import org.nd4j.linalg.activations.Activation
-import org.nd4j.linalg.dataset.api.iterator.DataSetIterator
-import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction
+import org.nd4j.linalg.learning.config.Nesterovs
+import org.nd4j.linalg.lossfunctions.LossFunctions
 
 /**
  * Two-layer MLP for MNIST using DL4J-style NeuralNet
@@ -35,37 +39,57 @@ import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction
  */
 object TrainMain extends App with Logging {
 
-  val height: Int = 28
-  val width: Int = 28
-  val nClasses: Int = 10
-  val batchSize: Int = 64
   val hiddenSize = 512
   val seed: Int = 123
   val epochs: Int = 15
   val learningRate: Double = 0.0015
   val decay: Double = 0.005
   val scoreFrequency = 1000
+  val numEpochs = 1
 
-  val mnistTrain: DataSetIterator =
-    new MnistDataSetIterator(batchSize, true, seed)
-  val mnistTest: DataSetIterator =
-    new MnistDataSetIterator(batchSize, false, seed)
+  val DATA_PATH = "src/main/resources/mnist_png/"
+
+  val mnistTrain = MnistLoader.fromDirectory(new File(DATA_PATH + "training"))
+  val mnistTest = MnistLoader.fromDirectory(new File(DATA_PATH + "testing"))
 
   logger.info("Build model...")
-  val model: NeuralNet = NeuralNet(rngSeed = seed)
 
-  model.add(Dense(hiddenSize, height * width, activation = Activation.RELU, regularizer = L2(learningRate * decay)))
-  model.add(Dense(hiddenSize, activation = Activation.RELU, regularizer = L2(learningRate * decay)))
-  model.add(Dense(nClasses, activation = Activation.SOFTMAX, regularizer = L2(learningRate * decay)))
-  model.compile(LossFunction.NEGATIVELOGLIKELIHOOD)
+  val conf = new NeuralNetConfiguration.Builder()
+    .seed(123)
+    .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+    .updater(new Nesterovs(0.006, 0.9))
+    .l2(1e-4)
+    .list
+    .layer(
+      0,
+      new DenseLayer.Builder()
+        .nIn(MnistLoader.height * MnistLoader.width)
+        .nOut(100)
+        .activation(Activation.RELU)
+        .weightInit(WeightInit.XAVIER)
+        .build
+    )
+    .layer(
+      1,
+      new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+        .nIn(100)
+        .nOut(MnistLoader.nClasses)
+        .activation(Activation.SOFTMAX)
+        .weightInit(WeightInit.XAVIER)
+        .build
+    )
+    .pretrain(false)
+    .backprop(true)
+    .setInputType(InputType.convolutional(MnistLoader.height, MnistLoader.width, MnistLoader.channels))
+    .build
 
-  logger.info("Train model...")
-  model.fit(mnistTrain, epochs, List(new ScoreIterationListener(scoreFrequency)))
+  val model = new MultiLayerNetwork(conf)
 
-  logger.info("Evaluate model...")
-  logger.info(s"Train accuracy = ${model.evaluate(mnistTrain).accuracy}")
-  logger.info(s"Test accuracy = ${model.evaluate(mnistTest).accuracy}")
+  model.setListeners(new ScoreIterationListener(10))
 
-  ModelSerializer.writeModel(model.getNetwork, "model.zip", false)
+  // fit once (one epoch)
+  model.fit(mnistTrain);
+
+  ModelSerializer.writeModel(model, "model.zip", false)
 
 }
