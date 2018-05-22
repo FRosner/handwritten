@@ -8,5 +8,5 @@ lazy val root = (project in file("."))
     name := "handwritten",
     libraryDependencies ++= List(
         scalaTest % Test
-    ) ++ deeplearning4j
+    ) ++ deeplearning4j ++ akkaHttp
   )
