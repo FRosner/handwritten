@@ -1,0 +1,6 @@
+.center {
+    margin: auto;
+    border: 3px dashed #ccc;
+    width: 280px;
+    height: 280px;
+}
