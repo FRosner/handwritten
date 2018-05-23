@@ -1,6 +1,19 @@
-.center {
+#canvasDiv {
     margin: auto;
     border: 3px dashed #ccc;
     width: 280px;
     height: 280px;
+    margin-top: 20px;
+}
+
+#controls {
+    margin: auto;
+    margin-top: 20px;
+    height: 50px;
+    width: 280px;
+    text-align: center;
+}
+
+#clearCanvas {
+    width: 100px;
 }

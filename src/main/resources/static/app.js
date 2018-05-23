@@ -42,14 +42,25 @@ window.onload = function() {
     var clickDrag = new Array();
     var paint;
 
+    $('#clearCanvas').mousedown(function(e) {
+      clickX = new Array();
+      clickY = new Array();
+      clickDrag = new Array();
+      clearCanvas();
+    });
+
     function addClick(x, y, dragging) {
       clickX.push(x);
       clickY.push(y);
       clickDrag.push(dragging);
     }
 
-    function redraw() {
+    function clearCanvas() {
       context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+    }
+
+    function redraw() {
+      clearCanvas();
 
       context.strokeStyle = "#000";
       context.lineJoin = "round";
