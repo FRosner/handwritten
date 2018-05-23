@@ -49,10 +49,8 @@ object MnistLoader {
   }
 
   def fromStream(stream: InputStream): INDArray = {
-    val show = new ShowImageTransform("this")
     val resizer = new ResizeImageTransform(width, height)
-    val transform = new MultiImageTransform(resizer, show)
-    val loader = new NativeImageLoader(height, width, channels, transform)
+    val loader = new NativeImageLoader(height, width, channels, resizer)
     val img = loader.asMatrix(stream)
     val scaler: DataNormalization = new ImagePreProcessingScaler(0, 1)
     scaler.transform(img)
