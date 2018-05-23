@@ -32,7 +32,7 @@ object PredictAPI extends Logging {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.dispatcher
 
-    val model = ModelSerializer.restoreMultiLayerNetwork("model.zip")
+    val model = new SynchronizedClassifier(ModelSerializer.restoreMultiLayerNetwork("model.zip"))
 
     val route =
       path("predict") {
@@ -54,7 +54,7 @@ object PredictAPI extends Logging {
           // when processing have finished create a response for the user
           onSuccess(done) { img =>
             complete {
-              util.Arrays.toString(img)
+              img.toString
             }
           }
         }
