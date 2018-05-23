@@ -42,27 +42,11 @@ object PredictAPI extends Logging {
           getFromResourceDirectory("static") // getFromDirectory("src/main/resources/static")
         } ~
         path("predict") {
-          entity(as[Multipart.FormData]) { formData =>
-            // collect all parts of the multipart as it arrives into a map
-            val allPartsF: Future[Map[String, Source[ByteString, NotUsed]]] = formData.parts
-              .mapAsync[(String, Source[ByteString, NotUsed])](1) {
-                case b: BodyPart =>
-                  b.toStrict(2.seconds).map(strict => b.name -> strict.entity.dataBytes)
-              }
-              .runFold(Map.empty[String, Source[ByteString, NotUsed]])((map, tuple) => map + tuple)
-
-            val done = allPartsF.map { allParts =>
-              val in = allParts("image").runWith(StreamConverters.asInputStream(3.seconds))
+          fileUpload("image") {
+            case (fileInfo, fileStream) =>
+              val in = fileStream.runWith(StreamConverters.asInputStream(3.seconds))
               val img = MnistLoader.fromStream(in)
-              model.predict(img)
-            }
-
-            // when processing have finished create a response for the user
-            onSuccess(done) { img =>
-              complete {
-                img.toString
-              }
-            }
+              complete(model.predict(img).toString)
           }
         }
 

@@ -42,11 +42,28 @@ window.onload = function() {
     var clickDrag = new Array();
     var paint;
 
-    $('#clearCanvas').mousedown(function(e) {
+    $('#clearCanvasButton').mousedown(function(e) {
       clickX = new Array();
       clickY = new Array();
       clickDrag = new Array();
       clearCanvas();
+    });
+
+    $('#predictButton').mousedown(function(e) {
+      canvas.toBlob(function(d) {
+      var fd = new FormData();
+      fd.append('image', d)
+        $.ajax({
+          type: "POST",
+          url: "predict",
+          data: fd,
+          contentType: false,
+          processData: false
+        }).done(function(o) {
+          $('#predictionResult').text(o)
+        });
+      });
+
     });
 
     function addClick(x, y, dragging) {

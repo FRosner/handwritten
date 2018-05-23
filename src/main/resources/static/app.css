@@ -14,6 +14,16 @@
     text-align: center;
 }
 
-#clearCanvas {
+#clearCanvasButton, #predictButton {
     width: 100px;
+}
+
+#predictionResult {
+    margin: auto;
+    margin-top: 20px;
+    height: 280px;
+    width: 280px;
+    text-align: center;
+    font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    font-size: 200px;
 }
