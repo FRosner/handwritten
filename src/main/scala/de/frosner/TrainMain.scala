@@ -25,7 +25,6 @@ import org.deeplearning4j.nn.conf.layers.{DenseLayer, OutputLayer}
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork
 import org.deeplearning4j.nn.weights.WeightInit
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener
-import org.deeplearning4j.scalnet.logging.Logging
 import org.deeplearning4j.util.ModelSerializer
 import org.nd4j.linalg.activations.Activation
 import org.nd4j.linalg.learning.config.Nesterovs
@@ -37,7 +36,7 @@ import org.nd4j.linalg.lossfunctions.LossFunctions
  *
  * @author David Kale
  */
-object TrainMain extends App with Logging {
+object TrainMain extends App {
 
   val hiddenSize = 512
   val seed: Int = 123
@@ -51,8 +50,6 @@ object TrainMain extends App with Logging {
 
   val mnistTrain = MnistLoader.fromDirectory(new File(DATA_PATH + "training"))
   val mnistTest = MnistLoader.fromDirectory(new File(DATA_PATH + "testing"))
-
-  logger.info("Build model...")
 
   val conf = new NeuralNetConfiguration.Builder()
     .seed(123)

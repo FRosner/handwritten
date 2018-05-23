@@ -11,7 +11,6 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Source, StreamConverters}
 import akka.util.ByteString
-import org.deeplearning4j.scalnet.logging.Logging
 import org.deeplearning4j.util.ModelSerializer
 import org.nd4j.linalg.api.ndarray.INDArray
 
@@ -24,7 +23,7 @@ curl \
   -F "image=@src/main/resources/mnist_png/testing/1/2.png" \
   localhost:8080/predict
  */
-object PredictAPI extends Logging {
+object PredictAPI {
 
   def main(args: Array[String]) {
 
