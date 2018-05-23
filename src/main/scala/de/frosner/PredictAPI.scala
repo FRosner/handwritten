@@ -13,6 +13,7 @@ import akka.stream.scaladsl.{Source, StreamConverters}
 import akka.util.ByteString
 import org.deeplearning4j.scalnet.logging.Logging
 import org.deeplearning4j.util.ModelSerializer
+import org.nd4j.linalg.api.ndarray.INDArray
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -45,7 +46,7 @@ object PredictAPI extends Logging {
           fileUpload("image") {
             case (fileInfo, fileStream) =>
               val in = fileStream.runWith(StreamConverters.asInputStream(3.seconds))
-              val img = MnistLoader.fromStream(in)
+              val img = invert(MnistLoader.fromStream(in))
               complete(model.predict(img).toString)
           }
         }
@@ -57,6 +58,11 @@ object PredictAPI extends Logging {
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port
       .onComplete(_ => system.terminate()) // and shutdown when done
+  }
+
+  def invert(img: INDArray): INDArray = {
+    img.rsubi(1)
+    img
   }
 
 }

@@ -74,7 +74,10 @@ window.onload = function() {
     }
 
     function clearCanvas() {
-      context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
+      context.beginPath();
+      context.rect(0, 0, context.canvas.width, context.canvas.height);
+      context.fillStyle = "white";
+      context.fill();
     }
 
     function redraw() {
