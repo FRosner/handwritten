@@ -8,6 +8,7 @@ import org.datavec.api.records.listener.impl.LogRecordListener
 import org.datavec.api.split.FileSplit
 import org.datavec.image.loader.NativeImageLoader
 import org.datavec.image.recordreader.ImageRecordReader
+import org.datavec.image.transform.{MultiImageTransform, ResizeImageTransform, ShowImageTransform}
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator
 import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator
@@ -48,7 +49,10 @@ object MnistLoader {
   }
 
   def fromStream(stream: InputStream): INDArray = {
-    val loader = new NativeImageLoader(height, width, channels)
+    val show = new ShowImageTransform("this")
+    val resizer = new ResizeImageTransform(width, height)
+    val transform = new MultiImageTransform(resizer, show)
+    val loader = new NativeImageLoader(height, width, channels, transform)
     val img = loader.asMatrix(stream)
     val scaler: DataNormalization = new ImagePreProcessingScaler(0, 1)
     scaler.transform(img)
