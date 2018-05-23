@@ -47,6 +47,7 @@ window.onload = function() {
       clickY = new Array();
       clickDrag = new Array();
       clearCanvas();
+      $('#predictionResult').text("")
     });
 
     $('#predictButton').mousedown(function(e) {
