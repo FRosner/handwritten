@@ -9,6 +9,7 @@ lazy val root = (project in file("."))
     version      in ThisBuild := "0.1.0-SNAPSHOT",
     mainClass in Compile := Some("de.frosner.PredictAPI"),
     name := "handwritten",
+    classpathTypes += "maven-plugin",
     libraryDependencies ++= List(
         scalaTest % Test
     ) ++ deeplearning4j ++ akkaHttp
