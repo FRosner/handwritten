@@ -14,7 +14,17 @@ object Dependencies {
     else
       throw new IllegalArgumentException(s"Unknown OS name '$osName'")
   }
-  private lazy val arch = sys.props("os.arch")
+  private lazy val arch = {
+    val osArch = sys.props("os.arch")
+    if (osArch.contains("64"))
+      "x86_64"
+    else if (osArch.contains("powerpc"))
+      "ppc64le"
+    else if (osArch.contains("86"))
+      "x86"
+    else
+      throw new IllegalArgumentException(s"Unknown architecture '$osArch'")
+  }
   private lazy val platform = s"$os-$arch"
   println(s"platform = $platform")
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1"
