@@ -85,7 +85,7 @@ window.onload = function() {
 
       context.strokeStyle = "#000";
       context.lineJoin = "round";
-      context.lineWidth = 20;
+      context.lineWidth = 10;
 
       for(var i=0; i < clickX.length; i++) {
         context.beginPath();
