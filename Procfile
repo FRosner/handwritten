@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/predict-api -Dhttp.port=$PORT
+web: target/universal/stage/bin/handwritten -Dhttp.port=$PORT
