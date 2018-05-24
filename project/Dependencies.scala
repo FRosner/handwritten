@@ -31,6 +31,7 @@ object Dependencies {
   lazy val deeplearning4j = List(
     "org.deeplearning4j" % "deeplearning4j-nn" % deeplearning4jVersion,
     "org.nd4j" % "nd4j-native" % deeplearning4jVersion classifier "" classifier platform,
+    "org.bytedeco.javacpp-presets" % "openblas" % "0.2.20-1.4.1" classifier "" classifier platform,
     "org.datavec" % "datavec-api" % deeplearning4jVersion
   )
   lazy val akkaHttp = List(
