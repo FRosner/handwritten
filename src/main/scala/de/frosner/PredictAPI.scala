@@ -11,6 +11,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Source, StreamConverters}
 import akka.util.ByteString
+import com.typesafe.config.ConfigFactory
 import org.deeplearning4j.util.ModelSerializer
 import org.nd4j.linalg.api.ndarray.INDArray
 
@@ -50,9 +51,11 @@ object PredictAPI {
           }
         }
 
-    val bindingFuture = Http().bindAndHandle(route, "localhost", 8080)
-
-    println(s"Server online at http://localhost:8080/\nPress RETURN to stop...")
+    val config = ConfigFactory.load()
+    val interface = config.getString("http.interface")
+    val port = config.getInt("http.port")
+    val bindingFuture = Http().bindAndHandle(route, interface, port)
+    println(s"Server online at http://$interface:$port/")
   }
 
   def invert(img: INDArray): INDArray = {
