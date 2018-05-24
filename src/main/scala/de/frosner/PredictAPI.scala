@@ -33,7 +33,7 @@ object PredictAPI {
     // needed for the future flatMap/onComplete in the end
     implicit val executionContext = system.dispatcher
 
-    val model = new SynchronizedClassifier(ModelSerializer.restoreMultiLayerNetwork("model.zip"))
+    lazy val model = new SynchronizedClassifier(ModelSerializer.restoreMultiLayerNetwork("model.zip"))
 
     val route =
       path("") {
@@ -56,6 +56,8 @@ object PredictAPI {
     val port = config.getInt("http.port")
     val bindingFuture = Http().bindAndHandle(route, interface, port)
     println(s"Server online at http://$interface:$port/")
+    println("Loading model")
+    println(s"Loaded ${model.classifier.getClass.getName}")
   }
 
   def invert(img: INDArray): INDArray = {
