@@ -2,6 +2,7 @@ import sbt._
 
 object Dependencies {
   private lazy val deeplearning4jVersion = "1.0.0-alpha"
+  println(s"os.name = '${sys.props("os.name")}', os.arch = '${sys.props("os.arch")}'")
   private lazy val os = {
     val osName = sys.props("os.name").toLowerCase
     if (osName.contains("linux"))
@@ -15,6 +16,7 @@ object Dependencies {
   }
   private lazy val arch = sys.props("os.arch")
   private lazy val platform = s"$os-$arch"
+  println(s"platform = $platform")
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1"
   lazy val deeplearning4j = List(
     "org.deeplearning4j" % "deeplearning4j-nn" % deeplearning4jVersion,
